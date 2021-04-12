@@ -107,7 +107,7 @@ Removing stopwords.
 stopwords <- read.table("p5-data/sotu/stopwords.txt", header = F)
 
 ##Change to stopwords.txt
-address <- tm_map(address, removeWords, stopwords("english"))
+address <- tm_map(address, removeWords, stopwords$V1)
 ```
 
 ## Q6 (c) (i)
