@@ -111,6 +111,11 @@ address <- Corpus(dsrc, readerControl=list(language="en"))
 
 party <- read.table("p5-data/sotu/party.txt", sep =",", header = F)
 colnames(party) <- c("Party", "Pres", "Year")
+filenames <- 1:231
+for (i in filenames) {
+  filenames[i] <-sprintf("a%d.txt", i)
+}
+party <- cbind(party, filenames = filenames)
 View(party)
 ```
 
