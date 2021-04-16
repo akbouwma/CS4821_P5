@@ -19,6 +19,7 @@ library(ggplot2)
 library(tm)
 library(stopwords)
 library(caret)
+library(dplyr)
 ```
 
 #Q4
@@ -121,6 +122,7 @@ for (i in filenames) {
 
 party <- cbind(party, filenames = filenames)
 View(party)
+View(address)
 ```
 
 ## Q6 (b)
@@ -138,8 +140,8 @@ Creating a term-document matrix.
 tdm <- TermDocumentMatrix(address)
 inspect(tdm[1:10,1:5])
 
-mfw <- findMostFreqTerms(tdm[,1:5])
-mfw
+termFreq <- rowSums(as.matrix(tdm))
+tf <- sort.int(termFreq, decreasing = T)
 
 #need 3000 most freq words over all speeches, not including stop words
 ```
