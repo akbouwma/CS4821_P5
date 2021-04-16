@@ -18,6 +18,7 @@ Packages used in this assignment:
 library(ggplot2)
 library(tm)
 library(stopwords)
+library(caret)
 ```
 
 #Q4
@@ -86,12 +87,10 @@ Plotting the data in the space defined by the first two PCs.
 ```{r, eval = TRUE}
 plot(pc20$scores[,1:2], xlab="Xv_1", ylab="Xv_2", main="First two principal component scores")
 text(pc20$scores[,1]+0.25, pc20$scores[,2], labels=stock20.scale[,1])
-
 ```
 
 ## Q5 (c)
 The points seem to be roughly clustered by the dates. Earlier months appear in the lower right hand corner while later months appear in the top right hand corner. Middle months such as May through July appear in the middle of the graph.
-
 
 ## Q5 (d)
 Performing PCA on DOW Jones 2019 data.
@@ -101,9 +100,8 @@ pc19$loadings
 
 plot(pc19$scores[,1:2], xlab="Xv_1", ylab="Xv_2", main="First two principal component scores")
 text(pc19$scores[,1]+0.25, pc19$scores[,2], labels=stock19.scale[,1])
-
 ```
-For the 2019 plot, earlier months are clustered in the left, middle months are clustered in the middle of the graph, and later months are clustered on the right. On the other hand, for the 2020 plot, the earlier months are clustered in the bottom right and later months are clustered in the top right. 
+For the 2019 plot, earlier months are clustered in the left, middle months are clustered in the middle of the graph, and later months are clustered on the right. On the other hand, for the 2020 plot, the earlier months are clustered in the bottom right and later months are clustered in the top right.
 
 # Q6
 
@@ -120,6 +118,7 @@ filenames <- 1:231
 for (i in filenames) {
   filenames[i] <-sprintf("a%d.txt", i)
 }
+
 party <- cbind(party, filenames = filenames)
 View(party)
 ```
@@ -129,14 +128,20 @@ Removing stopwords.
 ```{r, eval = TRUE}
 stopwords <- read.table("p5-data/sotu/stopwords.txt", header = F)
 
-##Change to stopwords.txt
+#Change to stopwords.txt
 address <- tm_map(address, removeWords, stopwords$V1)
 ```
 
 ## Q6 (c) (i)
 Creating a term-document matrix. 
 ```{r, eval = TRUE}
+tdm <- TermDocumentMatrix(address)
+inspect(tdm[1:10,1:5])
 
+mfw <- findMostFreqTerms(tdm[,1:5])
+mfw
+
+#need 3000 most freq words over all speeches, not including stop words
 ```
 
 ## Q6 (c) (ii)
