@@ -85,10 +85,13 @@ pc20$loadings
 Plotting the data in the space defined by the first two PCs.
 ```{r, eval = TRUE}
 plot(pc20$scores[,1:2], xlab="Xv_1", ylab="Xv_2", main="First two principal component scores")
+text(pc20$scores[,1]+0.25, pc20$scores[,2], labels=stock20.scale[,1])
+
 ```
 
 ## Q5 (c)
-[FILL IN]
+The points seem to be roughly clustered by the dates. Earlier months appear in the lower right hand corner while later months appear in the top right hand corner. Middle months such as May through July appear in the middle of the graph.
+
 
 ## Q5 (d)
 Performing PCA on DOW Jones 2019 data.
@@ -97,8 +100,10 @@ pc19 <- princomp(stock19.scale[2:31])
 pc19$loadings
 
 plot(pc19$scores[,1:2], xlab="Xv_1", ylab="Xv_2", main="First two principal component scores")
+text(pc19$scores[,1]+0.25, pc19$scores[,2], labels=stock19.scale[,1])
+
 ```
-[FILL IN]
+For the 2019 plot, earlier months are clustered in the left, middle months are clustered in the middle of the graph, and later months are clustered on the right. On the other hand, for the 2020 plot, the earlier months are clustered in the bottom right and later months are clustered in the top right. 
 
 # Q6
 
