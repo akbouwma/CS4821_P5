@@ -22,6 +22,7 @@ library(caret)
 library(dplyr)
 library(grid)
 library(gridExtra)
+library(naivebayes)
 ```
 
 #Q4
@@ -133,20 +134,39 @@ address <- tm_map(address, removeWords, stopwords$V1)
 Creating a term-document matrix. 
 ```{r, eval = TRUE}
 tdm <- TermDocumentMatrix(address)
+View(tdm)
 inspect(tdm[1:10,1:5])
 termFreq <- rowSums(as.matrix(tdm))
 tf <- sort.int(termFreq, decreasing = T)
-#need 3000 most freq words over all speeches, not including stop words
 ```
 
 ## Q6 (c) (ii)
 Determining the party affiliations of the president using the Bernoulli model of NB. 
 ```{r, eval = TRUE}
+party1 <- party[-c(231, 228, 220, 209, 175),]
+
+tdm1 <- tdm[,-c(231, 228, 220, 209, 175)]
+tdm1 <- t(tdm1)
+
+tdm2 <- tdm1[,c(231, 228, 220, 209, 175)]
+tdm2 <- t(tdm2)
+
+set.seed(123)
+bern.nb <- bernoulli_naive_bayes(as.matrix(tdm1), party1$Party)
+bern.pred <- predict(bern.nb, as.matrix(tdm2), type = "prob")
+
+print(bern.pred)
 ```
+P(C = Dems | X) = 0.3982301 and P(C = Reb | X) = 0.3893805
 
 ## Q6 (c) (iii)
 Determining the party affiliations of the president using the Multinomial model of NB. 
 ```{r, eval = TRUE}
+set.seed(345)
+multi.nb <- multinomial_naive_bayes(as.matrix(tdm1), party1$Party)
+multi.pred <- predict(multi.nb, as.matrix(tdm2), type = "prob")
+
+print(multi.pred)
 ```
 
 ## Q8
