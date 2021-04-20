@@ -29,7 +29,6 @@ library(naivebayes)
 Reading in the college data.
 ```{r, eval = TRUE}
 college <- read.csv("p5-data/college_data.csv")
-#View(college)
 ```
 Center and Scaling Data
 ```{r, eval = TRUE}
@@ -65,8 +64,6 @@ Reading in the stock data.
 ```{r, eval = TRUE}
 stock19 <- read.csv("p5-data/stock_data_2019.csv")
 stock20 <- read.csv("p5-data/stock_data_2020.csv")
-#View(stock19)
-#View(stock20)
 ```
 Center and Scale Data
 ```{r}
@@ -110,7 +107,7 @@ Importing the data.
 ```{r, eval = TRUE}
 dsrc <- DirSource("p5-data/sotu/files")
 address <- Corpus(dsrc, readerControl=list(language="en"))
-#summary(address)
+
 party <- read.table("p5-data/sotu/party.txt", sep =",", header = F)
 colnames(party) <- c("Party", "Pres", "Year")
 filenames <- 1:231
@@ -118,91 +115,93 @@ for (i in filenames) {
   filenames[i] <-sprintf("a%d.txt", i)
 }
 party <- cbind(party, filenames = filenames)
-#View(party)
-#View(address)
 ```
 
 ## Q6 (b)
 Removing stopwords.
 ```{r, eval = TRUE}
 stopwords <- read.table("p5-data/sotu/stopwords.txt", header = F)
-#Change to stopwords.txt
 address <- tm_map(address, removeWords, stopwords$V1)
 ```
 
 ## Q6 (c) (i)
 Creating a term-document matrix. 
 ```{r, eval = TRUE}
+
+View(party)
 tdm <- TermDocumentMatrix(address)
 inspect(tdm[1:10,1:5])
 termFreq <- rowSums(as.matrix(tdm))
 tf <- sort.int(termFreq, decreasing = T)
-#View(tf)
 TD <- as.matrix(tdm)
 
 TD.mostFreq <- TD[tf,]
-#View(TD.mostFreq)
 print(TD.mostFreq[1:10,1:5])
-#need 3000 most freq words over all speeches, not including stop words
 ```
 
 ## Q6 (c) (ii)
 Determining the party affiliations of the president using the Bernoulli model of NB. 
 ```{r, eval = TRUE}
-
 party1 <- party[-c(231, 228, 220, 209, 175),]
-
-#View(party1)
-
 TDPreTrain <- TD.mostFreq
 
 party1 <- filter(party1, Party == 'd' | Party == 'r')
 party1 <- party1[order(party1[,4],decreasing=FALSE),]
-View(party1)
-
 
 specialCols <- c("a231.txt", "a228.txt", "a220.txt", "a209.txt", "a175.txt")
 
-TD1 <- TD.mostFreq[,!colnames(TD.mostFreq)  %in% c("a231.txt", "a228.txt", "a220.txt", "a209.txt", "a175.txt")]
+TD1 <- TD.mostFreq[,!colnames(TD.mostFreq)%in% c("a231.txt", "a228.txt", "a220.txt", "a209.txt", "a175.txt")]
 TD2 <- TD.mostFreq[,c("a231.txt", "a228.txt", "a220.txt", "a209.txt", "a175.txt")]
-
-
 TD1 <- TD1[,colnames(TD1)  %in% party1$filenames]
-View(TD1)
-
-
-#View(TD2)
 
 bern.nb <- bernoulli_naive_bayes(t(TD1), party1$Party)
 predict(bern.nb, t(TD2), type = "prob")
-
 ```
++----------------+-------------+-------------+
+| Docs           | Dem         | Reb         |
++================+=============+=============+
+| Trump, 2017    | 0           | 1           |
++----------------+-------------+-------------+
+| Obama, 2014    | 1           | 0           |
++----------------+-------------+-------------+
+| Bush, 2006     | 0           | 1           |
++----------------+-------------+-------------+
+| Clinton, 1995  | 0           | 1           |
++----------------+-------------+-------------+
+| Kennedy, 1962  | 0           | 1           |
++----------------+-------------+-------------+
 
 ## Q6 (c) (iii)
 Determining the party affiliations of the president using the Multinomial model of NB. 
 ```{r, eval = TRUE}
-
 mult.nb <- multinomial_naive_bayes(t(TD1), party1$Party)
 predict(mult.nb, t(TD2), type = "prob")
 ```
++----------------+-------------+-------------+
+| Docs           | Dem         | Reb         |
++================+=============+=============+
+| Trump, 2017    | 1.058e^-61  | 1           |
++----------------+-------------+-------------+
+| Obama, 2014    | 1           | 0           |
++----------------+-------------+-------------+
+| Bush, 2006     | 1           | 0           |
++----------------+-------------+-------------+
+| Clinton, 1995  | 1           | 0           |
++----------------+-------------+-------------+
+| Kennedy, 1962  | 0           | 1           |
++----------------+-------------+-------------+
+
 ## Q7
 ```{r}
-TrainMultiomialNB <- function(tmd, y) {
-  M <- as.matrix(tmd)
-  N <- ncols(M)
-  
-  classes <- unique(y$Party)
-  
-  for (c in 1:length(classes)) {
+# TrainMultiomialNB <- function(tmd, y) {
+#  M <- as.matrix(tmd)
+#  N <- ncols(M)
+#  classes <- unique(y$Party)
+#  for (c in 1:length(classes)) {
     #Nc <- count docs in class
-  }
-  
-}
-
-
-
+#  }
+# }
 ```
-
 
 ## Q8
 ```{r}
@@ -254,6 +253,4 @@ for (i in 97:116) {
   print(g)
   
 }
-
-#grid.arrange(grobs = grids)
 ```
